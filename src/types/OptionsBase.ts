@@ -1,4 +1,4 @@
-import {Formats} from "./Format";
+import { Formats } from "./Format";
 
 export type OptionsBase = {
   configFile?: string;
@@ -18,6 +18,7 @@ export type OptionsBase = {
   fontWeight?: string | unknown;
   fixedWidth?: string | unknown;
   centerHorizontally?: boolean | unknown;
+  centerVertically?: boolean | unknown;
   normalize?: boolean;
   fontHeight?: string | unknown;
   round?: string | number;

@@ -1,13 +1,13 @@
-import type {Format, GlyphData, InitialOptions} from "../types";
-import {getBuiltInTemplates, getTemplateFilePath} from "../../templates";
-import {Readable} from "stream";
-import type {Result} from "../types/Result";
+import type { Format, GlyphData, InitialOptions } from "../types";
+import { getBuiltInTemplates, getTemplateFilePath } from "../../templates";
+import { Readable } from "stream";
+import type { Result } from "../types/Result";
 import SVGIcons2SVGFontStream from "svgicons2svgfont";
 import cosmiconfig from "cosmiconfig";
 import crypto from "crypto";
 import deepmerge from "deepmerge";
-import {getGlyphsData} from "./glyphsData";
-import {getOptions} from "./options";
+import { getGlyphsData } from "./glyphsData";
+import { getOptions } from "./options";
 import globby from "globby";
 import nunjucks from "nunjucks";
 import path from "path";
@@ -44,7 +44,6 @@ const toSvg = (glyphsData, options) => {
   let result = "";
 
   return new Promise((resolve, reject) => {
-
     let log = () => {
       Function.prototype();
     };
@@ -57,6 +56,7 @@ const toSvg = (glyphsData, options) => {
     const fontStream = new SVGIcons2SVGFontStream({
       ascent: options.ascent,
       centerHorizontally: options.centerHorizontally,
+      centerVertically: options.centerVertically,
       descent: options.descent,
       fixedWidth: options.fixedWidth,
       fontHeight: options.fontHeight,
@@ -68,12 +68,12 @@ const toSvg = (glyphsData, options) => {
       metadata: options.metadata,
       normalize: options.normalize,
       round: options.round,
-    }).
-      on("finish", () => resolve(result)).
-      on("data", (data) => {
+    })
+      .on("finish", () => resolve(result))
+      .on("data", (data) => {
         result += data;
-      }).
-      on("error", (error) => reject(error));
+      })
+      .on("error", (error) => reject(error));
 
     glyphsData.forEach((glyphData) => {
       const glyphStream: Readable = new Readable();
@@ -96,15 +96,15 @@ const toTtf = (buffer, options) => Buffer.from(svg2ttf(buffer, options).buffer);
 
 const toEot = (buffer) => Buffer.from(ttf2eot(buffer).buffer);
 
-const toWoff = (buffer, options) => Buffer.from(ttf2woff(buffer, options).buffer);
+const toWoff = (buffer, options) =>
+  Buffer.from(ttf2woff(buffer, options).buffer);
 
 const toWoff2 = (buffer) => wawoff2.compress(buffer);
 
 // eslint-disable-next-line no-unused-vars
 type Webfont = (initialOptions?: InitialOptions) => Promise<Result>;
 
-export const webfont : Webfont = async (initialOptions) => {
-
+export const webfont: Webfont = async (initialOptions) => {
   let options = getOptions(initialOptions);
 
   const config = await buildConfig({
@@ -119,15 +119,20 @@ export const webfont : Webfont = async (initialOptions) => {
   }
 
   const foundFiles = await globby([].concat(options.files));
-  const filteredFiles = foundFiles.filter((foundFile) => path.extname(foundFile) === ".svg");
+  const filteredFiles = foundFiles.filter(
+    (foundFile) => path.extname(foundFile) === ".svg"
+  );
 
   if (filteredFiles.length === 0) {
     throw new Error("Files glob patterns specified did not match any files");
   }
 
-  let glyphsData = await getGlyphsData(filteredFiles, options) as GlyphData[];
+  let glyphsData = (await getGlyphsData(filteredFiles, options)) as GlyphData[];
 
-  if (options.glyphTransformFn && typeof options.glyphTransformFn === "function") {
+  if (
+    options.glyphTransformFn &&
+    typeof options.glyphTransformFn === "function"
+  ) {
     const transformedGlyphs = glyphsData.map(async (glyphData: GlyphData) => {
       const metadata = await options.glyphTransformFn(glyphData.metadata);
 
@@ -145,13 +150,12 @@ export const webfont : Webfont = async (initialOptions) => {
     ttfOptions = options.formatsOptions.ttf;
   }
 
-  const svg = await toSvg(glyphsData, options) as Result["svg"];
+  const svg = (await toSvg(glyphsData, options)) as Result["svg"];
   const ttf = toTtf(svg, ttfOptions);
 
-  const result : Result = {
+  const result: Result = {
     glyphsData,
-    hash: crypto.createHash("md5").update(svg).
-      digest("hex"),
+    hash: crypto.createHash("md5").update(svg).digest("hex"),
     svg,
     ttf,
   };
@@ -161,7 +165,7 @@ export const webfont : Webfont = async (initialOptions) => {
   }
 
   if (options.formats.includes("woff")) {
-    result.woff = toWoff(ttf, {metadata: options.metadata});
+    result.woff = toWoff(ttf, { metadata: options.metadata });
   }
 
   if (options.formats.includes("woff2")) {
@@ -169,7 +173,6 @@ export const webfont : Webfont = async (initialOptions) => {
   }
 
   if (options.template) {
-
     const builtInTemplates = getBuiltInTemplates();
 
     // eslint-disable-next-line init-declarations
@@ -181,7 +184,6 @@ export const webfont : Webfont = async (initialOptions) => {
       const builtInPath = path.resolve(__dirname, "../..");
       nunjucks.configure(builtInPath);
       templateFilePath = getTemplateFilePath(options.template);
-
     } else {
       const resolvedTemplateFilePath = path.resolve(options.template);
 
@@ -192,7 +194,7 @@ export const webfont : Webfont = async (initialOptions) => {
     let hashOption = {};
 
     if (options.addHashInFontUrl) {
-      hashOption = {hash: result.hash};
+      hashOption = { hash: result.hash };
     }
 
     const nunjucksOptions = deepmerge.all([
@@ -208,14 +210,19 @@ export const webfont : Webfont = async (initialOptions) => {
       },
       hashOption,
       {
-        fonts: Object.fromEntries(new Map(options.formats.map((format: Format) => [
-          format, () => {
-            if (format === "woff2") {
-              return Buffer.from(result.woff2).toString("base64");
-            }
-            return result[format].toString("base64");
-          },
-        ]))),
+        fonts: Object.fromEntries(
+          new Map(
+            options.formats.map((format: Format) => [
+              format,
+              () => {
+                if (format === "woff2") {
+                  return Buffer.from(result.woff2).toString("base64");
+                }
+                return result[format].toString("base64");
+              },
+            ])
+          )
+        ),
       },
     ]);
 
