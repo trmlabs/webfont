@@ -40,6 +40,9 @@
     "test-debug": "npm test --detectOpenHandles --runInBand",
     "testu": "npm test -- -u"
   },
+  "precommit": [
+    "build"
+  ],
   "dependencies": {
     "cosmiconfig": "^5.2.0",
     "deepmerge": "^4.2.2",
