@@ -54,7 +54,7 @@
     "ttf2eot": "^2.0.0",
     "ttf2woff": "^3.0.0",
     "wawoff2": "^2.0.0",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.5.0"
   },
   "devDependencies": {
     "@babel/eslint-plugin": "latest",
@@ -84,7 +84,7 @@
     "jest": "27.1.0",
     "lint-staged": "11.1.2",
     "rimraf": "latest",
-    "rollup": "2.56.3",
+    "rollup": "2.79.2",
     "standard-version": "latest",
     "ts-node": "latest",
     "tslib": "latest",
