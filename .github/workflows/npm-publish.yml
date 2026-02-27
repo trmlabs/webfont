@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-hardened-latest-m
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
