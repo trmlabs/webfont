@@ -91,7 +91,8 @@
     "typescript": "latest"
   },
   "overrides": {
-    "@xmldom/xmldom": "0.7.13"
+    "@xmldom/xmldom": "0.7.13",
+    "picomatch": "2.3.2"
   },
   "repository": {
     "type": "git",
