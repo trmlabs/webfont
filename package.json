@@ -91,7 +91,8 @@
     "typescript": "latest"
   },
   "overrides": {
-    "@xmldom/xmldom": "0.7.13"
+    "@xmldom/xmldom": "0.7.13",
+    "lodash": "4.18.1"
   },
   "repository": {
     "type": "git",
