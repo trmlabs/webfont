@@ -91,7 +91,8 @@
     "typescript": "latest"
   },
   "overrides": {
-    "@xmldom/xmldom": "0.7.13"
+    "@xmldom/xmldom": "0.7.13",
+    "braces": "3.0.3"
   },
   "repository": {
     "type": "git",
